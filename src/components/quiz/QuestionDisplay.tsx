@@ -1,23 +1,21 @@
-import React from 'react';
+import { FC } from 'react';
 import { QuestionProgress } from './QuestionProgress';
 import { CountdownTimer } from './CountdownTimer';
 import { QuestionContent } from './QuestionContent';
 import type { QuestionRequestPayload } from '../../types/websocket';
 
 interface QuestionDisplayProps {
-  questionData: QuestionRequestPayload;
-  timeLeft: number;
-  onAnswerSelect: (index: number) => void;
-  isAnswerSelected: boolean;
+    questionData: QuestionRequestPayload;
+    onAnswerSelect: (index: number) => void;
+    isAnswerSelected: boolean;
 }
 
-export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
-  questionData,
-  timeLeft,
-  onAnswerSelect,
-  isAnswerSelected,
+export const QuestionDisplay: FC<QuestionDisplayProps> = ({
+    questionData,
+    onAnswerSelect,
+    isAnswerSelected,
 }) => {
-  const { question, currentQuestion, totalQuestions, timeLimit } = questionData;
+  const { question, answers, currentQuestion, totalQuestions, timeLimit } = questionData;
 
   return (
     <div className="min-h-screen bg-gray-50 relative">
@@ -27,12 +25,12 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
       />
       
       <CountdownTimer
-        timeLeft={timeLeft}
         totalTime={timeLimit}
       />
 
       <QuestionContent
         question={question}
+        answers={answers}
         onAnswerSelect={onAnswerSelect}
         isAnswerSelected={isAnswerSelected}
       />

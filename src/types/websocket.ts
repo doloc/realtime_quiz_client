@@ -17,72 +17,71 @@ export type ClientMessageType =
 
 // Base Message Interface
 export interface WebSocketMessage<T = any> {
-  type: ServerMessageType | ClientMessageType;
-  payload: T;
+    type: ServerMessageType | ClientMessageType;
+    payload: T;
 }
 
 // Payload Types
 export interface QuizStartCountdownPayload {
-  quizId: string;
-  startTime: number;
+    quizId: string;
+    startTime: number;
 }
 
-export interface Question {
-  id: string;
-  text: string;
-  imageUrl?: string;
-  options: Array<{
-    text: string;
-    isCorrect?: boolean;
-  }>;
-}
+// export interface Question {
+//   id: string;
+//   text: string;
+//   imageUrl?: string;
+//   options: Array<{
+//     text: string;
+//     isCorrect?: boolean;
+//   }>;
+// }
 
 export interface QuestionRequestPayload {
-  quizId: string;
-  question: Question;
-  currentQuestion: number;
-  totalQuestions: number;
-  timeLimit: number;
+    quizId: string;
+    question: string;
+    answers: string[];
+    currentQuestion: number;
+    totalQuestions: number;
+    timeLimit: number;
 }
 
 export interface QuestionResultPayload {
-  quizId: string;
-  correctAnswer: number;
-  answerCounts: number[];
-  totalAnswered: number;
+    quizId: string;
+    correctAnswer: string;
+    answerStats: number[];
+    totalAnswered: number;
 }
 
 export interface PlayerQuestionResultPayload {
-  quizId: string;
-  currentQuestion: number;
-  isCorrect: boolean;
-  points: number;
-  totalPoints: number;
-  ranking: number;
+    quizId: string;
+    currentQuestion: number;
+    isCorrect: boolean;
+    points: number;
+    totalPoints: number;
+    ranking: number;
+    streak: number;
 }
 
 export interface ParticipantPayload {
-  quizId: string;
-  participant: {
     id: string;
     name: string;
-  };
 }
 
 export interface LeaderboardEntry {
-  id: string;
-  name: string;
-  score: number;
-  rank: number;
+    playerId: string;
+    playerName: string;
+    score: number;
 }
 
 export interface LeaderboardPayload {
-  quizId: string;
-  leaderboard: LeaderboardEntry[];
+    quizId: string;
+    leaderboard: LeaderboardEntry[];
 }
 
 export interface QuizEndResultPayload {
-  quizId: string;
-  winners: LeaderboardEntry[];
-  finalScores: LeaderboardEntry[];
+    quizId: string;
+    ranking: number;
+    score: number;
+    totalPlayers: number;
 }

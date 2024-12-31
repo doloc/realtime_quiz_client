@@ -1,12 +1,12 @@
-import React from 'react';
+import { FC, InputHTMLAttributes } from 'react';
 import { clsx } from 'clsx';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
 }
 
-export const Input: React.FC<InputProps> = ({
+export const Input: FC<InputProps> = ({
   label,
   error,
   className,
