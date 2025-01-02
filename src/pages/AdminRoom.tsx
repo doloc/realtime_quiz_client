@@ -9,9 +9,9 @@ import { Button } from '../components/ui/Button';
 import type { RoomConfig as RoomConfigType, Question } from '../types';
 
 export const AdminRoom: FC = () => {
-    const { roomId } = useParams<{ roomId: string }>();
+    // const { roomId } = useParams<{ roomId: string }>();
     const { createQuiz, isCreating, error: quizError } = useQuiz();
-    const { room, setRoom, updateParticipants } = useGameStore();
+    const { room, setRoom } = useGameStore();
 
     const [config, setConfig] = useState<RoomConfigType>({
         title: '',
@@ -52,15 +52,15 @@ export const AdminRoom: FC = () => {
         
         setConfigError('');
         
-        const success = await createQuiz({
-        roomId: roomId!,
-        config,
-        questions,
+        const createQuizRs = await createQuiz({
+            // roomId: roomId!,
+            config,
+            questions,
         });
 
-        if (success) {
+        if (createQuizRs) {
         setRoom({
-            id: roomId!,
+            id: createQuizRs.quizId,
             config,
             questions,
             participants: [],
@@ -72,29 +72,6 @@ export const AdminRoom: FC = () => {
         }
     };
 
-    // useEffect(() => {
-    //   const checkAvailability = async () => {
-    //     console.log('AdminRoom mounted: ', roomId);
-    //     // check quiz availability
-    //     if (roomId) {
-    //       const success = await checkQuizAvailability(roomId);
-    //       if (success) {
-    //         setRoom({
-    //           id: roomId,
-    //           config,
-    //           questions,
-    //           participants: [],
-    //           currentQuestion: 0,
-    //           status: 'waiting',
-    //         });
-    //         setShowWaitingScreen(true);
-    //       }
-    //     }
-    //   };
-
-    //   checkAvailability();
-    // }, []);
-
     if (showWaitingScreen && room) {
         return <WaitingScreen room={room} onStart={() => {}} />;
     }
@@ -105,7 +82,7 @@ export const AdminRoom: FC = () => {
                 <div className="bg-white rounded-lg shadow p-6">
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Create Quiz Room</h1>
-                    <p className="text-gray-600">Room Code: {roomId}</p>
+                    {/* <p className="text-gray-600">Room Code: {roomId}</p> */}
                 </div>
 
                 <div className="space-y-8">

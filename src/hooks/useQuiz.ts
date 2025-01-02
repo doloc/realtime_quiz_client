@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createQuiz, joinQuiz } from '../services/quiz';
-import type { QuizCreateData, JoinQuizResponse } from '../types';
+import type { QuizCreateData, JoinQuizResponse, CreateQuizResponse } from '../types';
 
 export const useQuiz = () => {
     const [isCreating, setIsCreating] = useState(false);
@@ -8,16 +8,16 @@ export const useQuiz = () => {
     const [isReconnecting] = useState(false);
     const [error, setError] = useState<string>();
 
-    const handleCreateQuiz = async (quizData: QuizCreateData) => {
+    const handleCreateQuiz = async (quizData: QuizCreateData): Promise<CreateQuizResponse | null> => {
         setIsCreating(true);
         setError(undefined);
 
         try {
-            await createQuiz(quizData);
-            return true;
+            const response = await createQuiz(quizData);
+            return response;
         } catch (err) {
             setError('Failed to create quiz. Please try again.');
-            return false;
+            return null;
         } finally {
             setIsCreating(false);
         }

@@ -1,9 +1,14 @@
 import type { Question, RoomConfig } from './room';
 
 export interface QuizCreateData {
-    roomId: string;
+    // roomId: string;
     config: RoomConfig;
     questions: Question[];
+}
+
+export interface CreateQuizResponse {
+    message: string;
+    quizId: string;
 }
 
 export interface JoinQuizResponse {

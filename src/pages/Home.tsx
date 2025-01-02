@@ -6,7 +6,6 @@ import { Button } from '../components/ui/Button';
 import { LoginModal } from '../components/auth/LoginModal';
 import { useAuth } from '../hooks/useAuth';
 import { useQuiz } from '../hooks/useQuiz';
-import { createRoom } from '../services/room';
 import { getCookie } from '../utils/cookie';
 
 export const Home: FC = () => {
@@ -55,9 +54,8 @@ export const Home: FC = () => {
                 return;
             }
 
-            // If authenticated, create a new room
-            const newRoomId = await createRoom();
-            navigate(`/admin/${newRoomId}`);
+            // If authenticated, redirect
+            navigate(`/admin`);
         } catch (err) {
             setError('Failed to create room. Please try again.');
         } finally {
@@ -69,10 +67,8 @@ export const Home: FC = () => {
         const success = await login(username, password);
         if (success) {
             setShowLoginModal(false);
-            // Create new room after successful login
             try {
-                const newRoomId = await createRoom();
-                navigate(`/admin/${newRoomId}`);
+                navigate(`/admin`);
             } catch (err) {
                 setError('Failed to create room. Please try again.');
             }

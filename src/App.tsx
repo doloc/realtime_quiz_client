@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { AdminRoom } from './pages/AdminRoom';
@@ -9,7 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/admin/:roomId" element={<AdminRoom />} />
+        <Route path="/admin" element={<AdminRoom />} />
         <Route path="/play/:roomId" element={<PlayerRoom />} />
       </Routes>
     </BrowserRouter>

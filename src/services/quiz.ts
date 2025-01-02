@@ -1,10 +1,11 @@
 import { quizApi } from './api';
-import type { QuizCreateData, JoinQuizResponse } from '../types';
+import type { QuizCreateData, JoinQuizResponse, CreateQuizResponse } from '../types';
 import { setCookie, COOKIE_EXPIRY } from '../utils/cookie';
 
-export const createQuiz = async (quizData: QuizCreateData): Promise<void> => {
+export const createQuiz = async (quizData: QuizCreateData): Promise<CreateQuizResponse> => {
     try {
-        await quizApi.createQuiz(quizData);
+        const response = await quizApi.createQuiz(quizData);
+        return response;
     } catch (error) {
         console.error('Failed to create quiz:', error);
         throw new Error('Failed to create quiz. Please try again.');

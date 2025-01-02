@@ -31,13 +31,6 @@ export const authApi = {
     },
 };
 
-export const roomApi = {
-    createRoom: async () => {
-        const response = await api.post('/room/create-room');
-        return response.data;
-    },
-};
-
 export const quizApi = {
     createQuiz: async (quizData: QuizCreateData) => {
         const response = await api.post('/quiz/create-quiz', quizData);
