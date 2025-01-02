@@ -4,6 +4,6 @@ export const calculateAnswerPercentage = (count: number, total: number): number 
     return Math.round((count / total) * 100);
 };
 
-export const getMaxAnswerCount = (counts: number[]): number => {
-    return Math.max(...counts, 0);
-};
+export const getMaxAnswerCount = (answers: Record<string, number>): number => {
+    return Math.max(...Object.values(answers));
+}

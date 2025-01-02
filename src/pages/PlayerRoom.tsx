@@ -1,14 +1,16 @@
 import { useState, useCallback, FC } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { StartCountdown } from '../components/quiz/StartCountdown';
 import { QuestionDisplay } from '../components/quiz/QuestionDisplay';
-import { WaitingForResults } from '../components/quiz/WaitingForResults';
-import { PlayerQuestionResult } from '../components/quiz/PlayerQuestionResult';
+import { WaitingForResults } from '../components/player/WaitingForResults';
+import { PlayerQuestionResult } from '../components/player/PlayerQuestionResult';
 import { useWebSocket } from '../hooks/useWebSocket';
-import type { QuestionRequestPayload, PlayerQuestionResultPayload, QuizStartCountdownPayload, QuestionResultPayload, QuizEndResultPayload } from '../types/websocket';
-import { PlayerQuizEndScreen } from '../components/quiz/PlayerQuizEndScreen';
+import type { QuestionRequestPayload, PlayerQuestionResultPayload, QuizStartCountdownPayload, QuizEndResultPayload, QuizPayload } from '../types/websocket';
+import { PlayerQuizEndScreen } from '../components/player/PlayerQuizEndScreen';
+import { QuizNotificationPopup } from '../components/quiz/QuizNotificationPopupProps';
 
 export const PlayerRoom: FC = () => {
+    const navigate = useNavigate();
     const { roomId } = useParams<{ roomId: string }>();
     const [currentQuestion, setCurrentQuestion] = useState<QuestionRequestPayload | null>(null);
     const [questionResult, setQuestionResult] = useState<PlayerQuestionResultPayload | null>(null);
@@ -16,6 +18,7 @@ export const PlayerRoom: FC = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [showCountdown, setShowCountdown] = useState(false);
     const [startTime, setStartTime] = useState<number | undefined>();
+    const [notification, setNotification] = useState<QuizPayload>();
 
     const handleQuizStart = useCallback(() => {
         setShowCountdown(false);
@@ -26,42 +29,58 @@ export const PlayerRoom: FC = () => {
 
     const { sendMessage } = useWebSocket(
         {
-        role: 'player',
-        quizId: roomId!,
-        playerName: URLSearchParams ? new URLSearchParams(window.location.search).get('username') || '' : '',
+            role: 'player',
+            quizId: roomId!,
+            playerName: URLSearchParams ? new URLSearchParams(window.location.search).get('username') || '' : '',
         },
         {
-        onQuizStartCountdown: (data: QuizStartCountdownPayload) => {
-            setShowCountdown(true);
-            setStartTime(parseInt(data.startTime.toString(), 10));
-        },
-        onQuestionRequest: (data: QuestionRequestPayload) => {
-            setCurrentQuestion(data);
-            setSelectedAnswer(null);
-            setQuestionResult(null);
-        },
-        onPlayerQuestionResult: (data: PlayerQuestionResultPayload) => {
-            setQuestionResult(data);
-            setCurrentQuestion(null);
-        },
-        onQuizEndResult: (data: QuizEndResultPayload) => {
-            setQuizEndResult(data);
-            setCurrentQuestion(null);
-            setQuestionResult(null);
-        }
+            onQuizStartCountdown: (data: QuizStartCountdownPayload) => {
+                setShowCountdown(true);
+                setStartTime(parseInt(data.startTime.toString(), 10));
+            },
+            onQuestionRequest: (data: QuestionRequestPayload) => {
+                setCurrentQuestion(data);
+                setSelectedAnswer(null);
+                setQuestionResult(null);
+            },
+            onPlayerQuestionResult: (data: PlayerQuestionResultPayload) => {
+                setQuestionResult(data);
+                setSelectedAnswer(null);
+                setCurrentQuestion(null);
+            },
+            onQuizEndResult: (data: QuizEndResultPayload) => {
+                setQuizEndResult(data);
+                setCurrentQuestion(null);
+                setQuestionResult(null);
+            },
+            onQuizEnded: (data: QuizPayload) => {
+                setNotification(data);
+            },
+            onQuizNotFound: (data: QuizPayload) => {
+                setNotification(data);
+            },
         }
     );
 
     const handleAnswerSelect = (answerIndex: number) => {
         if (selectedAnswer !== null || !currentQuestion) return;
-
-        setSelectedAnswer(answerIndex);
-        sendMessage('SUBMIT_ANSWER', {
-        quizId: roomId,
-        currentQuestion: currentQuestion.currentQuestion,
-        answer: answerIndex,
+            setSelectedAnswer(answerIndex);
+            sendMessage('SUBMIT_ANSWER', {
+            quizId: roomId,
+            questionId: currentQuestion.questionId,
+            currentQuestion: currentQuestion.currentQuestion,
+            answer: currentQuestion.answers[answerIndex],
         });
     };
+
+    if (notification) {
+        return (
+            <QuizNotificationPopup
+                message={notification.message}
+                onGoHome={() => navigate('/')}
+            />
+        )
+    }
 
     if (showCountdown) {
         return (
@@ -91,7 +110,7 @@ export const PlayerRoom: FC = () => {
 
     if (quizEndResult) {
         return (
-        <PlayerQuizEndScreen result={quizEndResult}  />
+        <PlayerQuizEndScreen result={quizEndResult} onPlayAgain={() => navigate('/')}  />
         );
     }
 

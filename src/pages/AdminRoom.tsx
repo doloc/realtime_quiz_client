@@ -2,15 +2,15 @@ import { FC, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuiz } from '../hooks/useQuiz';
 import { useGameStore } from '../store/gameStore';
-import { RoomConfig } from '../components/RoomConfig';
-import { QuestionList } from '../components/QuestionList';
-import { WaitingScreen } from '../components/WaitingScreen';
+import { RoomConfig } from '../components/admin/RoomConfig';
+import { QuestionList } from '../components/admin/QuestionList';
+import { WaitingScreen } from '../components/admin/WaitingScreen';
 import { Button } from '../components/ui/Button';
 import type { RoomConfig as RoomConfigType, Question } from '../types';
 
 export const AdminRoom: FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
-    const { createQuiz, checkQuizAvailability, isCreating, isReconnecting, error: quizError } = useQuiz();
+    const { createQuiz, isCreating, error: quizError } = useQuiz();
     const { room, setRoom, updateParticipants } = useGameStore();
 
     const [config, setConfig] = useState<RoomConfigType>({

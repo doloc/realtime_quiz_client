@@ -1,15 +1,17 @@
 import { FC, useState } from 'react';
 import { Share2 } from 'lucide-react';
-import { Button } from './ui/Button';
-import { ParticipantList } from './ParticipantList';
-import { StartCountdown } from './quiz/StartCountdown';
-import { useWebSocket } from '../hooks/useWebSocket';
-import type { Room } from '../types';
-import type { LeaderboardPayload, ParticipantPayload, QuestionRequestPayload, QuestionResultPayload, QuizStartCountdownPayload } from '../types/websocket';
-import { useGameStore } from '../store/gameStore';
-import { QuestionResults } from './admin/QuestionResults';
-import { QuestionDisplay } from './admin/QuestionDisplay';
-import { QuizEndScreen } from './admin/QuizEndScreen';
+import { Button } from '../ui/Button';
+import { ParticipantList } from '../admin/ParticipantList';
+import { StartCountdown } from '../quiz/StartCountdown';
+import { useWebSocket } from '../../hooks/useWebSocket';
+import type { Room } from '../../types';
+import type { LeaderboardPayload, ParticipantPayload, QuestionRequestPayload, QuestionResultPayload, QuizPayload, QuizStartCountdownPayload } from '../../types/websocket';
+import { useGameStore } from '../../store/gameStore';
+import { QuestionResults } from './QuestionResults';
+import { QuestionDisplay } from './QuestionDisplay';
+import { QuizEndScreen } from './QuizEndScreen';
+import { useNavigate } from 'react-router-dom';
+import { QuizNotificationPopup } from '../quiz/QuizNotificationPopupProps';
 
 interface WaitingScreenProps {
     room: Room;
@@ -17,12 +19,14 @@ interface WaitingScreenProps {
 }
 
 export const WaitingScreen: FC<WaitingScreenProps> = ({ room, onStart }) => {
+    const navigate = useNavigate();
     const [showCountdown, setShowCountdown] = useState(false);
     const [currentQuestionData, setCurrentQuestionData] = useState<QuestionRequestPayload | null>(null);
     const [questionResultData, setQuestionResultData] = useState<QuestionResultPayload | null>(null);
     const [leaderboardData, setLeaderboardData] = useState<LeaderboardPayload | null>(null);
     const { updateParticipants } = useGameStore();
     const [timeLeft, setTimeLeft] = useState<number>(0);
+    const [notification, setNotification] = useState<QuizPayload>();
 
     const { sendMessage } = useWebSocket(
         {
@@ -30,40 +34,46 @@ export const WaitingScreen: FC<WaitingScreenProps> = ({ room, onStart }) => {
             quizId: room.id,
             },
         {
-        onQuizStartCountdown: (data: QuizStartCountdownPayload) => {
-            console.log('Quiz start countdown', data);
-            setTimeLeft(data.startTime);
-            setShowCountdown(true);
-        },
-        onQuestionRequest: (data: QuestionRequestPayload) => {
-            console.log('Question request', data);
-            setCurrentQuestionData(data);
-            setQuestionResultData(null);
-            setTimeLeft(data.timeLimit);
-        },
-        onQuestionResult: (data: QuestionResultPayload) => {
-            console.log('Question result', data);
-            setQuestionResultData(data);
-        },
-        onParticipantJoined: (data: ParticipantPayload) => {
-            console.log('Participant joined', data);
-            if (room) {
-            updateParticipants([...room.participants, data]);
-            }
-        },
-        onParticipantLeft: (data: ParticipantPayload) => {
-            if (room) {
-            updateParticipants(
-                room.participants.filter(p => p.id !== data.id)
-            );
-            }
-        },
-        onLeaderboard: (data: LeaderboardPayload) => {
-            console.log('Leaderboard', data);
-            setLeaderboardData(data);
-            setCurrentQuestionData(null);
-            setQuestionResultData(null);
-        }
+            onQuizStartCountdown: (data: QuizStartCountdownPayload) => {
+                console.log('Quiz start countdown', data);
+                setTimeLeft(data.startTime);
+                setShowCountdown(true);
+            },
+            onQuestionRequest: (data: QuestionRequestPayload) => {
+                console.log('Question request', data);
+                setCurrentQuestionData(data);
+                setQuestionResultData(null);
+                setTimeLeft(data.timeLimit);
+            },
+            onQuestionResult: (data: QuestionResultPayload) => {
+                console.log('Question result', data);
+                setQuestionResultData(data);
+            },
+            onParticipantJoined: (data: ParticipantPayload) => {
+                console.log('Participant joined', data);
+                if (room) {
+                updateParticipants([...room.participants, data]);
+                }
+            },
+            onParticipantLeft: (data: ParticipantPayload) => {
+                if (room) {
+                updateParticipants(
+                    room.participants.filter(p => p.id !== data.id)
+                );
+                }
+            },
+            onLeaderboard: (data: LeaderboardPayload) => {
+                console.log('Leaderboard', data);
+                setLeaderboardData(data);
+                setCurrentQuestionData(null);
+                setQuestionResultData(null);
+            },
+            onQuizEnded: (data: QuizPayload) => {
+                setNotification(data);
+            },
+            onQuizNotFound: (data: QuizPayload) => {
+                setNotification(data);
+            },
         }
     );
 
@@ -91,6 +101,15 @@ export const WaitingScreen: FC<WaitingScreenProps> = ({ room, onStart }) => {
         sendMessage('QUIZ_END', { quizId: room.id });
     }
 
+    if (notification) {
+        return (
+            <QuizNotificationPopup
+                message={notification.message}
+                onGoHome={() => navigate('/')}
+            />
+        )
+    }
+
     if (showCountdown) {
         return <StartCountdown timeLeft={timeLeft} onComplete={onComplete} />;
     }
@@ -114,7 +133,7 @@ export const WaitingScreen: FC<WaitingScreenProps> = ({ room, onStart }) => {
 
     if (leaderboardData) {
         return (
-        <QuizEndScreen result={leaderboardData} />
+        <QuizEndScreen result={leaderboardData} onPlayAgain={() => navigate('/')} />
         )
     }
 

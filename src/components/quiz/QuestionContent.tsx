@@ -30,7 +30,7 @@ export const QuestionContent: FC<QuestionContentProps> = ({
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
-                {answers.map((option, index) => (
+                {answers.map((option, index) => option.length !== 0 && (
                 <button
                     key={index}
                     onClick={() => onAnswerSelect(index)}

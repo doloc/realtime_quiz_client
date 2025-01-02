@@ -49,8 +49,8 @@ export const quizApi = {
         return response.data;
     },
 
-    checkQuizAvailability: async (roomId: string, sessionId: string) => {
-        const response = await api.get(`/quiz/check-availability?quizId=${roomId}&sessionId=${sessionId}`);
+    checkQuizAvailability: async (roomId: string, role: string, sessionId: string) => {
+        const response = await api.get(`/quiz/check-availability?quizId=${roomId}&role=${role}&sessionId=${sessionId}`);
         return response.data;
     },
 };

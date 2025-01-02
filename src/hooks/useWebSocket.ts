@@ -11,6 +11,7 @@ import type {
   LeaderboardPayload,
   QuizEndResultPayload,
   PlayerQuestionResultPayload,
+  QuizPayload,
 } from '../types/websocket';
 
 interface WebSocketConfig {
@@ -28,6 +29,8 @@ interface WebSocketHandlers {
     onParticipantLeft?: (data: ParticipantPayload) => void;
     onLeaderboard?: (data: LeaderboardPayload) => void;
     onQuizEndResult?: (data: QuizEndResultPayload) => void;
+    onQuizEnded?: (data: QuizPayload) => void;
+    onQuizNotFound?: (data: QuizPayload) => void;
 }
 
 export const useWebSocket = ({ role, quizId, playerName }: WebSocketConfig, handlers?: WebSocketHandlers) => {

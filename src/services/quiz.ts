@@ -24,12 +24,3 @@ export const joinQuiz = async (roomId: string, username: string): Promise<JoinQu
         throw new Error('Failed to join quiz. Please try again.');
     }
 };
-
-export const checkQuizAvailability = async (roomId: string, sessionId: string): Promise<void> => {
-    try {
-        await quizApi.checkQuizAvailability(roomId, sessionId);
-    } catch (error) {
-        console.error('Failed to check quiz availability:', error);
-        throw new Error('Failed to check quiz availability. Please try again.');
-    }
-}

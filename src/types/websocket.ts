@@ -7,7 +7,9 @@ export type ServerMessageType =
   | 'PARTICIPANT_JOINED'
   | 'PARTICIPANT_LEFT'
   | 'LEADER_BOARD'
-  | 'QUIZ_END_RESULT';
+  | 'QUIZ_END_RESULT'
+  | 'QUIZ_ENDED'
+  | 'QUIZ_NOT_FOUND';
 
 export type ClientMessageType =
   | 'START_QUIZ'
@@ -39,6 +41,7 @@ export interface QuizStartCountdownPayload {
 
 export interface QuestionRequestPayload {
     quizId: string;
+    questionId: number;
     question: string;
     answers: string[];
     currentQuestion: number;
@@ -49,7 +52,7 @@ export interface QuestionRequestPayload {
 export interface QuestionResultPayload {
     quizId: string;
     correctAnswer: string;
-    answerStats: number[];
+    answerStats: Record<string, number>;
     totalAnswered: number;
 }
 
@@ -84,4 +87,9 @@ export interface QuizEndResultPayload {
     ranking: number;
     score: number;
     totalPlayers: number;
+}
+
+export interface QuizPayload {
+    quizId: string;
+    message: string;
 }

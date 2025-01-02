@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { Button } from './ui/Button';
-import { Input } from './ui/Input';
-import type { Question } from '../types';
+import { Question } from '../../types';
+import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 
 interface QuestionListProps {
     questions: Question[];

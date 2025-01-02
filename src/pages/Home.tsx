@@ -22,8 +22,8 @@ export const Home: FC = () => {
 
     const handleJoinRoom = async () => {
         if (!roomId || !username) {
-        setError('Please fill in all fields');
-        return;
+            setError('Please fill in all fields');
+            return;
         }
 
         try {
@@ -33,49 +33,49 @@ export const Home: FC = () => {
             navigate(`/play/${response.quizId}?username=${encodeURIComponent(response.username)}`);
         }
         } catch (err) {
-        setError('Failed to join room. Please check the room code and try again.');
+            setError('Failed to join room. Please check the room code and try again.');
         }
     };
 
     const handleCreateRoom = async () => {
         setIsCreatingRoom(true);
         try {
-        // First, check if there's a token and verify it
-        const isAuthenticated = await verifyToken();
-        // get session id from cookie
-        const sessionId = getCookie('sessionId');
-        // if no session id found, show login modal
-        if (!sessionId) {
-            setShowLoginModal(true);
-            return;
-        }
-        
-        if (!isAuthenticated) {
-            setShowLoginModal(true);
-            return;
-        }
+            // First, check if there's a token and verify it
+            const isAuthenticated = await verifyToken();
+            // get session id from cookie
+            const sessionId = getCookie('sessionId');
+            // if no session id found, show login modal
+            if (!sessionId) {
+                setShowLoginModal(true);
+                return;
+            }
+            
+            if (!isAuthenticated) {
+                setShowLoginModal(true);
+                return;
+            }
 
-        // If authenticated, create a new room
-        const newRoomId = await createRoom();
-        navigate(`/admin/${newRoomId}`);
+            // If authenticated, create a new room
+            const newRoomId = await createRoom();
+            navigate(`/admin/${newRoomId}`);
         } catch (err) {
-        setError('Failed to create room. Please try again.');
+            setError('Failed to create room. Please try again.');
         } finally {
-        setIsCreatingRoom(false);
+            setIsCreatingRoom(false);
         }
     };
 
     const handleLogin = async (username: string, password: string) => {
         const success = await login(username, password);
         if (success) {
-        setShowLoginModal(false);
-        // Create new room after successful login
-        try {
-            const newRoomId = await createRoom();
-            navigate(`/admin/${newRoomId}`);
-        } catch (err) {
-            setError('Failed to create room. Please try again.');
-        }
+            setShowLoginModal(false);
+            // Create new room after successful login
+            try {
+                const newRoomId = await createRoom();
+                navigate(`/admin/${newRoomId}`);
+            } catch (err) {
+                setError('Failed to create room. Please try again.');
+            }
         }
     };
 

@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import { Input } from './ui/Input';
-import { Select } from './ui/Select';
-import type { RoomConfig as RoomConfigType } from '../types';
+import { Input } from '../ui/Input';
+import { Select } from '../ui/Select';
+import type { RoomConfig as RoomConfigType } from '../../types';
 
 interface RoomConfigProps {
     config: RoomConfigType;

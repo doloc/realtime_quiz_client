@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
 import { Users } from 'lucide-react';
-import type { User } from '../types';
+import { User } from '../../types';
 
 interface ParticipantListProps {
     participants: User[];

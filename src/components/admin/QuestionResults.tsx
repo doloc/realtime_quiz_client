@@ -49,7 +49,7 @@ export const QuestionResults: FC<QuestionResultsProps> = ({
                     {answers.map((option, index) => (
                     <AnswerBar
                         key={index}
-                        count={answerStats[index]}
+                        count={answerStats[option] || 0}
                         totalAnswers={totalAnswered}
                         maxCount={maxCount}
                         isCorrect={option === correctAnswer}
