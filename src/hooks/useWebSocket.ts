@@ -51,7 +51,7 @@ export const useWebSocket = ({ role, quizId, playerName }: WebSocketConfig, hand
             return;
         }
 
-        const wsUrl = `ws://localhost:8080/ws?role=${role}&quizId=${quizId}&sessionId=${sessionId}` + (playerName ? `&playerName=${playerName}` : '');
+        const wsUrl = `ws://realtime-quiz-server.onrender.com/ws?role=${role}&quizId=${quizId}&sessionId=${sessionId}` + (playerName ? `&playerName=${playerName}` : '');
         ws.current = new WebSocket(wsUrl);
 
         ws.current.onopen = () => {

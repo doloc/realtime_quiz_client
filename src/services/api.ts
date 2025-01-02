@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { QuizCreateData, JoinQuizResponse } from '../types';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'https://realtime-quiz-server.onrender.com';
 
 const api = axios.create({
     baseURL: API_URL,
